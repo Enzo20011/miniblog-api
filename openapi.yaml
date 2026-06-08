@@ -1,0 +1,464 @@
+openapi: 3.0.3
+info:
+  title: API MiniBlog
+  description: API REST para gestionar autores, publicaciones (posts) y comentarios de un servicio de blogs. Proyecto Integrador M2.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desarrollo local
+paths:
+  /authors:
+    get:
+      summary: Listar todos los autores
+      description: Obtiene la lista completa de todos los autores registrados ordenados por ID.
+      responses:
+        '200':
+          description: Lista de autores obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Author'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Crear un nuevo autor
+      description: Registra un nuevo autor en el sistema. El correo electrónico debe ser único.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+              properties:
+                name:
+                  type: string
+                  example: Ana García
+                email:
+                  type: string
+                  format: email
+                  example: ana@example.com
+                bio:
+                  type: string
+                  example: Desarrolladora full-stack apasionada por Node.js
+      responses:
+        '201':
+          description: Autor creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '400':
+          description: Datos inválidos o correo electrónico ya registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+
+  /authors/{id}:
+    get:
+      summary: Detalle de un autor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID del autor
+      responses:
+        '200':
+          description: Detalles del autor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '404':
+          description: Autor no encontrado
+        '500':
+          description: Error interno
+
+    put:
+      summary: Actualizar un autor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID del autor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Ana García Editado
+                email:
+                  type: string
+                  format: email
+                  example: ana_nuevo@example.com
+                bio:
+                  type: string
+                  example: Nueva biografía
+      responses:
+        '200':
+          description: Autor actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '400':
+          description: Error en validaciones o email duplicado
+        '404':
+          description: Autor no encontrado
+        '500':
+          description: Error interno
+
+    delete:
+      summary: Eliminar un autor (Borrado en cascada)
+      description: Elimina un autor del sistema. Se eliminarán en cascada todas sus publicaciones y comentarios asociados.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID del autor a eliminar
+      responses:
+        '204':
+          description: Autor eliminado correctamente (sin contenido en la respuesta)
+        '404':
+          description: Autor no encontrado
+        '500':
+          description: Error interno
+
+  /posts:
+    get:
+      summary: Listar todas las publicaciones
+      responses:
+        '200':
+          description: Lista de posts obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+    post:
+      summary: Crear una nueva publicación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - content
+                - author_id
+              properties:
+                title:
+                  type: string
+                  example: Introducción a Node.js
+                content:
+                  type: string
+                  example: Node.js es un runtime de JavaScript...
+                author_id:
+                  type: integer
+                  example: 1
+                published:
+                  type: boolean
+                  default: false
+                  example: true
+      responses:
+        '201':
+          description: Publicación creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Datos inválidos o el autor_id no existe
+        '500':
+          description: Error interno
+
+  /posts/{id}:
+    get:
+      summary: Detalle de una publicación
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalles de la publicación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Publicación no encontrada
+        '500':
+          description: Error interno
+
+    put:
+      summary: Actualizar una publicación
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Título Editado
+                content:
+                  type: string
+                  example: Contenido Editado
+                published:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Publicación actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Publicación no encontrada
+        '500':
+          description: Error interno
+
+    delete:
+      summary: Eliminar una publicación (Borrado en cascada)
+      description: Elimina una publicación. Se borrarán en cascada todos los comentarios asociados a este post.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Publicación eliminada exitosamente
+        '404':
+          description: Publicación no encontrada
+        '500':
+          description: Error interno
+
+  /posts/author/{authorId}:
+    get:
+      summary: Obtener publicaciones de un autor específico con detalles del autor
+      description: Devuelve todas las publicaciones escritas por el autor especificado, incluyendo un objeto anidado con los detalles del autor.
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de publicaciones del autor obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostWithAuthorDetail'
+        '404':
+          description: Autor no encontrado
+        '500':
+          description: Error interno
+
+  /comments/post/{postId}:
+    get:
+      summary: Listar comentarios de una publicación (Crédito Extra)
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de comentarios del post obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '404':
+          description: Publicación no encontrada
+        '500':
+          description: Error interno
+
+  /comments:
+    post:
+      summary: Crear un nuevo comentario (Crédito Extra)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - post_id
+                - author_id
+                - content
+              properties:
+                post_id:
+                  type: integer
+                  example: 1
+                author_id:
+                  type: integer
+                  example: 2
+                content:
+                  type: string
+                  example: ¡Excelente artículo!
+      responses:
+        '201':
+          description: Comentario creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          description: Datos inválidos o el post_id/author_id no existe
+        '500':
+          description: Error interno
+
+  /comments/{id}:
+    delete:
+      summary: Eliminar un comentario (Crédito Extra)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Comentario eliminado exitosamente
+        '404':
+          description: Comentario no encontrado
+        '500':
+          description: Error interno
+
+components:
+  schemas:
+    Author:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Ana García
+        email:
+          type: string
+          example: ana@example.com
+        bio:
+          type: string
+          nullable: true
+          example: Desarrolladora full-stack apasionada por Node.js
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-06-01T10:00:00Z'
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Introducción a Node.js
+        content:
+          type: string
+          example: Node.js es un runtime de JavaScript...
+        author_id:
+          type: integer
+          example: 1
+        published:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-06-04T09:00:00Z'
+
+    PostWithAuthorDetail:
+      allOf:
+        - $ref: '#/components/schemas/Post'
+        - type: object
+          properties:
+            author:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: Ana García
+                email:
+                  type: string
+                  example: ana@example.com
+                bio:
+                  type: string
+                  nullable: true
+                  example: Desarrolladora full-stack
+    
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        post_id:
+          type: integer
+          example: 1
+        author_id:
+          type: integer
+          example: 2
+        content:
+          type: string
+          example: ¡Excelente artículo!
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-06-04T10:00:00Z'
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: El email ya está registrado
