@@ -145,4 +145,3 @@ Durante el desarrollo de este proyecto utilicé herramientas de IA como asistent
   - Me ayudó a recordar la sintaxis de consultas parametrizadas con `pg` y cómo manejar errores de PostgreSQL (como el código `23505` para emails duplicados).
   - La usé para entender cómo configurar Jest con mocks al escribir los tests, ya que era la primera vez que trabajaba con Supertest.
   - Me sirvió para revisar si la estructura del archivo `openapi.yaml` era válida y entender el formato de los schemas.
-- **Decisiones propias**: La arquitectura del proyecto, la lógica de validaciones, el diseño del esquema SQL y la organización general del código fueron decisiones tomadas por mí durante el desarrollo.
