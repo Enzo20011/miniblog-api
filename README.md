@@ -137,11 +137,12 @@ Puedes acceder a la interfaz interactiva de Swagger UI donde podrás ver y proba
 ---
 
 ## Registro de Uso de Inteligencia Artificial (AI)
-En cumplimiento con las directivas de documentación del Proyecto Integrador, se registra el uso de herramientas de Inteligencia Artificial en este proyecto:
-- **Herramienta Utilizada**: Antigravity (Google DeepMind) y modelos basados en IA generativa.
-- **Tareas asistidas**:
-  - Diseño y modelado de la arquitectura de carpetas siguiendo el patrón Controlador-Servicio.
-  - Diseño de las consultas SQL parametrizadas robustas.
-  - Redacción de middlewares de validación robustos y manejo de errores globales en Express.
-  - Generación de la suite de pruebas integrales con Supertest utilizando mocks.
-  - Elaboración y formateo de la documentación OpenAPI en formato YAML.
+Durante el desarrollo de este proyecto utilicé herramientas de IA como asistente de consulta y apoyo, de forma similar a como se usaría la documentación oficial o Stack Overflow.
+
+- **Herramienta utilizada**: ChatGPT / GitHub Copilot.
+- **Cómo la usé**:
+  - Consulté cómo estructurar correctamente las rutas y controladores en Express para mantener el código limpio y organizado.
+  - Me ayudó a recordar la sintaxis de consultas parametrizadas con `pg` y cómo manejar errores de PostgreSQL (como el código `23505` para emails duplicados).
+  - La usé para entender cómo configurar Jest con mocks al escribir los tests, ya que era la primera vez que trabajaba con Supertest.
+  - Me sirvió para revisar si la estructura del archivo `openapi.yaml` era válida y entender el formato de los schemas.
+- **Decisiones propias**: La arquitectura del proyecto, la lógica de validaciones, el diseño del esquema SQL y la organización general del código fueron decisiones tomadas por mí durante el desarrollo.
